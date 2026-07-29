@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import {
   Leaf,
   Droplet,
@@ -19,14 +19,14 @@ import {
 import { Link } from 'react-router';
 
 const plants = [
-  { name: "Ginger", icon: Sprout, tint: "bg-amber-100", ring: "ring-amber-200", ic: "text-amber-700", rot: "rotate-3", blurb: "Eases nausea and supports healthy digestion." },
-  { name: "Aloe Vera", icon: Droplet, tint: "bg-emerald-100", ring: "ring-emerald-200", ic: "text-emerald-700", rot: "-rotate-2", blurb: "Cools and soothes irritated or sun-exposed skin." },
-  { name: "Tulsi", icon: Leaf, tint: "bg-lime-100", ring: "ring-lime-200", ic: "text-lime-700", rot: "-rotate-3", blurb: "A daily tonic traditionally used to support immunity and calm." },
-  { name: "Honey", icon: Sparkles, tint: "bg-orange-100", ring: "ring-orange-200", ic: "text-orange-700", rot: "rotate-2", blurb: "Soothes a sore throat and sweetens remedies naturally." },
-  { name: "Herbal Blends", icon: Flower2, tint: "bg-stone-100", ring: "ring-stone-200", ic: "text-stone-700", rot: "rotate-6", blurb: "Curated mixes for sleep, focus, and everyday balance." },
-  { name: "Neem", icon: TreeDeciduous, tint: "bg-teal-100", ring: "ring-teal-200", ic: "text-teal-700", rot: "-rotate-6", blurb: "A bitter leaf long used for clear skin and detox rituals." },
-  { name: "Ashwagandha", icon: Moon, tint: "bg-violet-100", ring: "ring-violet-200", ic: "text-violet-700", rot: "rotate-2", blurb: "An adaptogenic root that helps the body handle daily stress." },
-  { name: "Turmeric", icon: Flame, tint: "bg-yellow-100", ring: "ring-yellow-200", ic: "text-yellow-700", rot: "-rotate-2", blurb: "A golden root prized for its calming, anti-inflammatory properties." },
+  { name: "Ginger", imageUrl: "https://images.unsplash.com/photo-1599940824399-b87987ceb72a?auto=format&fit=crop&q=80&w=200", icon: Sprout, tint: "bg-amber-100", ring: "ring-amber-200", ic: "text-amber-700", rot: "rotate-3", blurb: "Eases nausea and supports healthy digestion." },
+  { name: "Aloe Vera", imageUrl: "https://images.unsplash.com/photo-1596547609652-9cb5d8d736bb?auto=format&fit=crop&q=80&w=200", icon: Droplet, tint: "bg-emerald-100", ring: "ring-emerald-200", ic: "text-emerald-700", rot: "-rotate-2", blurb: "Cools and soothes irritated or sun-exposed skin." },
+  { name: "Tulsi", imageUrl: "https://images.unsplash.com/photo-1628155930542-3c7a64e2c833?auto=format&fit=crop&q=80&w=200", icon: Leaf, tint: "bg-lime-100", ring: "ring-lime-200", ic: "text-lime-700", rot: "-rotate-3", blurb: "A daily tonic traditionally used to support immunity and calm." },
+  { name: "Honey", imageUrl: "https://images.unsplash.com/photo-1587049352847-4d4b126a71e5?auto=format&fit=crop&q=80&w=200", icon: Sparkles, tint: "bg-orange-100", ring: "ring-orange-200", ic: "text-orange-700", rot: "rotate-2", blurb: "Soothes a sore throat and sweetens remedies naturally." },
+  { name: "Herbal Blends", imageUrl: "https://images.unsplash.com/photo-1597827827014-99882209d16a?auto=format&fit=crop&q=80&w=200", icon: Flower2, tint: "bg-stone-100", ring: "ring-stone-200", ic: "text-stone-700", rot: "rotate-6", blurb: "Curated mixes for sleep, focus, and everyday balance." },
+  { name: "Neem", imageUrl: "https://images.unsplash.com/photo-1622977265115-cce36bf437a8?auto=format&fit=crop&q=80&w=200", icon: TreeDeciduous, tint: "bg-teal-100", ring: "ring-teal-200", ic: "text-teal-700", rot: "-rotate-6", blurb: "A bitter leaf long used for clear skin and detox rituals." },
+  { name: "Ashwagandha", imageUrl: "https://images.unsplash.com/photo-1605335502758-c9fb23d70f8f?auto=format&fit=crop&q=80&w=200", icon: Moon, tint: "bg-violet-100", ring: "ring-violet-200", ic: "text-violet-700", rot: "rotate-2", blurb: "An adaptogenic root that helps the body handle daily stress." },
+  { name: "Turmeric", imageUrl: "https://images.unsplash.com/photo-1615484478144-80b1827fa1e5?auto=format&fit=crop&q=80&w=200", icon: Flame, tint: "bg-yellow-100", ring: "ring-yellow-200", ic: "text-yellow-700", rot: "-rotate-2", blurb: "A golden root prized for its calming, anti-inflammatory properties." },
 ];
 
 // first 6 plants power the hero mosaic; all 8 power the carousel below
@@ -182,25 +182,8 @@ export default function Home() {
           className="mt-8 flex gap-5 overflow-x-auto scroll-smooth pb-4"
           style={{ scrollSnapType: "x mandatory" }}
         >
-          {plants.map(({ name, icon: Icon, tint, ring, ic, blurb }) => (
-            <div
-              key={name}
-              className={`flex w-64 shrink-0 flex-col gap-4 rounded-2xl border border-stone-200 bg-white p-6 shadow-sm transition hover:shadow-md`}
-              style={{ scrollSnapAlign: "start" }}
-            >
-              <div className={`flex h-12 w-12 items-center justify-center rounded-full ${tint} ring-1 ${ring}`}>
-                <Icon className={`h-6 w-6 ${ic}`} strokeWidth={1.75} />
-              </div>
-              <h3 className="text-lg font-semibold text-stone-900">{name}</h3>
-              <p className="text-sm leading-relaxed text-stone-600">{blurb}</p>
-              <Link
-                to="/remedies"
-                className="mt-auto inline-flex items-center gap-1 text-sm font-semibold text-emerald-800 hover:underline"
-              >
-                See remedies
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
-            </div>
+          {plants.map((plant) => (
+            <CarouselCard key={plant.name} plant={plant} />
           ))}
         </div>
       </section>
@@ -280,6 +263,41 @@ export default function Home() {
           </p>
         </div>
       </footer>
+    </div>
+  );
+}
+
+function CarouselCard({ plant }) {
+  const { name, icon: Icon, tint, ring, ic, blurb, imageUrl } = plant;
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  return (
+    <div
+      className="flex w-64 shrink-0 flex-col gap-4 rounded-2xl border border-stone-200 bg-white p-6 shadow-sm transition hover:shadow-md"
+      style={{ scrollSnapAlign: "start" }}
+    >
+      <div className={`relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full ${tint} ring-1 ${ring}`}>
+        {imageUrl && (
+          <img
+            src={imageUrl}
+            alt={name}
+            onLoad={() => setIsLoaded(true)}
+            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+          />
+        )}
+        <div className={`absolute inset-0 flex items-center justify-center transition-opacity duration-300 ${isLoaded ? 'opacity-0' : 'opacity-100'}`}>
+          <Icon className={`h-6 w-6 ${ic}`} strokeWidth={1.75} />
+        </div>
+      </div>
+      <h3 className="text-lg font-semibold text-stone-900">{name}</h3>
+      <p className="text-sm leading-relaxed text-stone-600">{blurb}</p>
+      <Link
+        to="/remedies"
+        className="mt-auto inline-flex items-center gap-1 text-sm font-semibold text-emerald-800 hover:underline"
+      >
+        See remedies
+        <ArrowRight className="h-3.5 w-3.5" />
+      </Link>
     </div>
   );
 }
