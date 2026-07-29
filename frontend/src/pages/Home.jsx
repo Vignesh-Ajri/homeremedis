@@ -111,16 +111,15 @@ export default function Home() {
 
           {/* right: mosaic of 6 tiles */}
           <div id="plants" className="grid grid-cols-3 gap-4 sm:gap-5">
-            {tiles.map(({ name, icon: Icon, tint, ring, ic, rot }) => (
-              <div
+            {tiles.map(({ name, imageUrl, tint, ring, rot }) => (
+              <MosaicTile
                 key={name}
-                className={`group flex aspect-square flex-col items-center justify-center gap-3 rounded-2xl ${tint} ring-1 ${ring} ${rot} p-3 text-center shadow-sm transition duration-300 hover:rotate-0 hover:shadow-md`}
-              >
-                <Icon className={`h-7 w-7 ${ic}`} strokeWidth={1.75} />
-                <span className="text-xs font-semibold text-stone-700 sm:text-sm">
-                  {name}
-                </span>
-              </div>
+                name={name}
+                imageUrl={imageUrl}
+                tint={tint}
+                ring={ring}
+                rot={rot}
+              />
             ))}
           </div>
         </section>
@@ -298,6 +297,25 @@ function CarouselCard({ plant }) {
         See remedies
         <ArrowRight className="h-3.5 w-3.5" />
       </Link>
+    </div>
+  );
+}
+
+function MosaicTile({ name, imageUrl, tint, ring, rot }) {
+  return (
+    <div
+      className={`group relative flex aspect-square overflow-hidden rounded-2xl ${tint} ring-1 ${ring} ${rot} shadow-sm transition duration-300 hover:rotate-0 hover:shadow-md`}
+    >
+      <img
+        src={imageUrl}
+        alt={name}
+        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+      />
+      {/* Gradient overlay + name label */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+      <span className="absolute bottom-2 w-full px-2 text-center text-xs font-semibold text-white sm:text-sm">
+        {name}
+      </span>
     </div>
   );
 }
