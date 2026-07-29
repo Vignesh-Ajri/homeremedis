@@ -17,14 +17,20 @@ import {
   Zap,
 } from "lucide-react";
 import { Link } from 'react-router';
+import gingerImg from '../assets/ginger.jpg';
+import aloeVeraImg from '../assets/alovera.jpg';
+import tulsiImg from '../assets/tulasi.jpg';
+import honeyImg from '../assets/honey.jpg';
+import herbsImg from '../assets/herbs.jpg';
+import ginger2Img from '../assets/ginger2.jpg';
 
 const plants = [
-  { name: "Ginger", imageUrl: "https://images.unsplash.com/photo-1599940824399-b87987ceb72a?auto=format&fit=crop&q=80&w=200", icon: Sprout, tint: "bg-amber-100", ring: "ring-amber-200", ic: "text-amber-700", rot: "rotate-3", blurb: "Eases nausea and supports healthy digestion." },
-  { name: "Aloe Vera", imageUrl: "https://images.unsplash.com/photo-1596547609652-9cb5d8d736bb?auto=format&fit=crop&q=80&w=200", icon: Droplet, tint: "bg-emerald-100", ring: "ring-emerald-200", ic: "text-emerald-700", rot: "-rotate-2", blurb: "Cools and soothes irritated or sun-exposed skin." },
-  { name: "Tulsi", imageUrl: "https://images.unsplash.com/photo-1628155930542-3c7a64e2c833?auto=format&fit=crop&q=80&w=200", icon: Leaf, tint: "bg-lime-100", ring: "ring-lime-200", ic: "text-lime-700", rot: "-rotate-3", blurb: "A daily tonic traditionally used to support immunity and calm." },
-  { name: "Honey", imageUrl: "https://images.unsplash.com/photo-1587049352847-4d4b126a71e5?auto=format&fit=crop&q=80&w=200", icon: Sparkles, tint: "bg-orange-100", ring: "ring-orange-200", ic: "text-orange-700", rot: "rotate-2", blurb: "Soothes a sore throat and sweetens remedies naturally." },
-  { name: "Herbal Blends", imageUrl: "https://images.unsplash.com/photo-1597827827014-99882209d16a?auto=format&fit=crop&q=80&w=200", icon: Flower2, tint: "bg-stone-100", ring: "ring-stone-200", ic: "text-stone-700", rot: "rotate-6", blurb: "Curated mixes for sleep, focus, and everyday balance." },
-  { name: "Neem", imageUrl: "https://images.unsplash.com/photo-1622977265115-cce36bf437a8?auto=format&fit=crop&q=80&w=200", icon: TreeDeciduous, tint: "bg-teal-100", ring: "ring-teal-200", ic: "text-teal-700", rot: "-rotate-6", blurb: "A bitter leaf long used for clear skin and detox rituals." },
+  { name: "Ginger", imageUrl: gingerImg, icon: Sprout, tint: "bg-amber-100", ring: "ring-amber-200", ic: "text-amber-700", rot: "rotate-3", blurb: "Eases nausea and supports healthy digestion." },
+  { name: "Aloe Vera", imageUrl: aloeVeraImg, icon: Droplet, tint: "bg-emerald-100", ring: "ring-emerald-200", ic: "text-emerald-700", rot: "-rotate-2", blurb: "Cools and soothes irritated or sun-exposed skin." },
+  { name: "Tulsi", imageUrl: tulsiImg, icon: Leaf, tint: "bg-lime-100", ring: "ring-lime-200", ic: "text-lime-700", rot: "-rotate-3", blurb: "A daily tonic traditionally used to support immunity and calm." },
+  { name: "Honey", imageUrl: honeyImg, icon: Sparkles, tint: "bg-orange-100", ring: "ring-orange-200", ic: "text-orange-700", rot: "rotate-2", blurb: "Soothes a sore throat and sweetens remedies naturally." },
+  { name: "Herbal Blends", imageUrl: herbsImg, icon: Flower2, tint: "bg-stone-100", ring: "ring-stone-200", ic: "text-stone-700", rot: "rotate-6", blurb: "Curated mixes for sleep, focus, and everyday balance." },
+  { name: "Neem", imageUrl: ginger2Img, icon: TreeDeciduous, tint: "bg-teal-100", ring: "ring-teal-200", ic: "text-teal-700", rot: "-rotate-6", blurb: "A bitter leaf long used for clear skin and detox rituals." },
   { name: "Ashwagandha", imageUrl: "https://images.unsplash.com/photo-1605335502758-c9fb23d70f8f?auto=format&fit=crop&q=80&w=200", icon: Moon, tint: "bg-violet-100", ring: "ring-violet-200", ic: "text-violet-700", rot: "rotate-2", blurb: "An adaptogenic root that helps the body handle daily stress." },
   { name: "Turmeric", imageUrl: "https://images.unsplash.com/photo-1615484478144-80b1827fa1e5?auto=format&fit=crop&q=80&w=200", icon: Flame, tint: "bg-yellow-100", ring: "ring-yellow-200", ic: "text-yellow-700", rot: "-rotate-2", blurb: "A golden root prized for its calming, anti-inflammatory properties." },
 ];
