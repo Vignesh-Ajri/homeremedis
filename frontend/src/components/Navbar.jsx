@@ -49,13 +49,6 @@ export default function Navbar() {
               {link.name}
             </Link>
           ))}
-          {/* Action button placeholder */}
-          <Link
-            to="/plants"
-            className="rounded-full bg-emerald-800 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-900"
-          >
-            Explore Catalog
-          </Link>
         </div>
 
         {/* Mobile Menu Toggle */}
@@ -86,15 +79,6 @@ export default function Navbar() {
                 {link.name}
               </Link>
             ))}
-            <div className="pt-4 border-t border-stone-100">
-              <Link
-                to="/plants"
-                onClick={() => setIsMenuOpen(false)}
-                className="flex justify-center rounded-full bg-emerald-800 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-900"
-              >
-                Explore Catalog
-              </Link>
-            </div>
           </div>
         </div>
       )}
