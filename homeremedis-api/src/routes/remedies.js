@@ -4,6 +4,9 @@ const Remedy = require('../models/Remedy');
 
 const router = express.Router();
 
+const ALLOWED_SORT_FIELDS = ['title', '-title', 'prepTimeMinutes', '-prepTimeMinutes', 'createdAt', '-createdAt'];
+const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 // GET /api/remedies
 router.get('/', async (req, res) => {
   try {
@@ -11,15 +14,16 @@ router.get('/', async (req, res) => {
     
     let query = {};
     if (category) {
-      query.categories = { $regex: `^${category}$`, $options: 'i' };
+      query.categories = { $regex: `^${escapeRegex(category)}$`, $options: 'i' };
     }
 
-    const parsedLimit = parseInt(limit, 10) || 10;
-    const parsedPage = parseInt(page, 10) || 1;
+    const safeSort = ALLOWED_SORT_FIELDS.includes(sort) ? sort : 'title';
+    const parsedLimit = Math.min(parseInt(limit, 10) || 10, 50);
+    const parsedPage = Math.max(parseInt(page, 10) || 1, 1);
     const skip = (parsedPage - 1) * parsedLimit;
 
     const remedies = await Remedy.find(query)
-      .sort(sort)
+      .sort(safeSort)
       .skip(skip)
       .limit(parsedLimit);
 
@@ -35,7 +39,8 @@ router.get('/', async (req, res) => {
       }
     });
   } catch (error) {
-    res.status(500).json({ message: 'Server Error', error: error.message });
+    console.error(error);
+    res.status(500).json({ message: 'Server Error' });
   }
 });
 
@@ -55,7 +60,8 @@ router.get('/:id', async (req, res) => {
 
     res.json(remedy);
   } catch (error) {
-    res.status(500).json({ message: 'Server Error', error: error.message });
+    console.error(error);
+    res.status(500).json({ message: 'Server Error' });
   }
 });
 
@@ -102,7 +108,8 @@ router.delete('/:id', adminAuth, async (req, res) => {
     }
     res.json({ message: 'Remedy deleted successfully' });
   } catch (error) {
-    res.status(500).json({ message: 'Server Error', error: error.message });
+    console.error(error);
+    res.status(500).json({ message: 'Server Error' });
   }
 });
 

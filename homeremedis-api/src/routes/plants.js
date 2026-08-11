@@ -5,6 +5,12 @@ const Remedy = require('../models/Remedy');
 
 const router = express.Router();
 
+// Allowed sort fields — prevents arbitrary field injection
+const ALLOWED_SORT_FIELDS = ['name', '-name', 'countryOfOrigin', '-countryOfOrigin', 'createdAt', '-createdAt'];
+
+// Escape special regex characters to prevent ReDoS
+const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 // GET /api/plants
 router.get('/', async (req, res) => {
   try {
@@ -12,18 +18,19 @@ router.get('/', async (req, res) => {
     
     let query = {};
     if (search) {
-      query.name = { $regex: search, $options: 'i' };
+      query.name = { $regex: escapeRegex(search), $options: 'i' };
     }
     if (origin) {
-      query.countryOfOrigin = { $regex: origin, $options: 'i' };
+      query.countryOfOrigin = { $regex: escapeRegex(origin), $options: 'i' };
     }
 
-    const parsedLimit = parseInt(limit, 10) || 10;
-    const parsedPage = parseInt(page, 10) || 1;
+    const safeSort = ALLOWED_SORT_FIELDS.includes(sort) ? sort : 'name';
+    const parsedLimit = Math.min(parseInt(limit, 10) || 10, 50); // cap at 50
+    const parsedPage = Math.max(parseInt(page, 10) || 1, 1);
     const skip = (parsedPage - 1) * parsedLimit;
 
     const plants = await Plant.find(query)
-      .sort(sort)
+      .sort(safeSort)
       .skip(skip)
       .limit(parsedLimit);
 
@@ -39,7 +46,8 @@ router.get('/', async (req, res) => {
       }
     });
   } catch (error) {
-    res.status(500).json({ message: 'Server Error', error: error.message });
+    console.error(error);
+    res.status(500).json({ message: 'Server Error' });
   }
 });
 
