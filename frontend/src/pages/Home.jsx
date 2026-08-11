@@ -23,6 +23,7 @@ import tulsiImg from '../assets/tulasi.jpg';
 import honeyImg from '../assets/honey.jpg';
 import herbsImg from '../assets/herbs.jpg';
 import neemImg from '../assets/neem.jpg';
+import ginger2Img from '../assets/ginger2.jpg';
 
 const plants = [
   { name: "Ginger", imageUrl: gingerImg, icon: Sprout, tint: "bg-amber-100", ring: "ring-amber-200", ic: "text-amber-700", rot: "rotate-3", blurb: "Eases nausea and supports healthy digestion." },
@@ -31,8 +32,8 @@ const plants = [
   { name: "Honey", imageUrl: honeyImg, icon: Sparkles, tint: "bg-orange-100", ring: "ring-orange-200", ic: "text-orange-700", rot: "rotate-2", blurb: "Soothes a sore throat and sweetens remedies naturally." },
   { name: "Herbal Blends", imageUrl: herbsImg, icon: Flower2, tint: "bg-stone-100", ring: "ring-stone-200", ic: "text-stone-700", rot: "rotate-6", blurb: "Curated mixes for sleep, focus, and everyday balance." },
   { name: "Neem", imageUrl: neemImg, icon: TreeDeciduous, tint: "bg-teal-100", ring: "ring-teal-200", ic: "text-teal-700", rot: "-rotate-6", blurb: "A bitter leaf long used for clear skin and detox rituals." },
-  { name: "Ashwagandha", imageUrl: "https://images.unsplash.com/photo-1605335502758-c9fb23d70f8f?auto=format&fit=crop&q=80&w=200", icon: Moon, tint: "bg-violet-100", ring: "ring-violet-200", ic: "text-violet-700", rot: "rotate-2", blurb: "An adaptogenic root that helps the body handle daily stress." },
-  { name: "Turmeric", imageUrl: "https://images.unsplash.com/photo-1615484478144-80b1827fa1e5?auto=format&fit=crop&q=80&w=200", icon: Flame, tint: "bg-yellow-100", ring: "ring-yellow-200", ic: "text-yellow-700", rot: "-rotate-2", blurb: "A golden root prized for its calming, anti-inflammatory properties." },
+  { name: "Ashwagandha", imageUrl: herbsImg, icon: Moon, tint: "bg-violet-100", ring: "ring-violet-200", ic: "text-violet-700", rot: "rotate-2", blurb: "An adaptogenic root that helps the body handle daily stress." },
+  { name: "Turmeric", imageUrl: ginger2Img, icon: Flame, tint: "bg-yellow-100", ring: "ring-yellow-200", ic: "text-yellow-700", rot: "-rotate-2", blurb: "A golden root prized for its calming, anti-inflammatory properties." },
 ];
 
 // first 6 plants power the hero mosaic; all 8 power the carousel below
@@ -286,6 +287,8 @@ function CarouselCard({ plant }) {
           <img
             src={imageUrl}
             alt={name}
+            loading="lazy"
+            decoding="async"
             onLoad={() => setIsLoaded(true)}
             className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
           />
@@ -315,6 +318,8 @@ function MosaicTile({ name, imageUrl, tint, ring, rot }) {
       <img
         src={imageUrl}
         alt={name}
+        loading="lazy"
+        decoding="async"
         className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
       />
       {/* Gradient overlay + name label */}
