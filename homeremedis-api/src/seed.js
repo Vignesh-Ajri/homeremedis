@@ -330,11 +330,11 @@ const seedDatabase = async () => {
     console.log(`Inserted ${createdRemedies.length} remedies.`);
 
     console.log('Seeding completed successfully!');
-    process.exit(0);
+    return { success: true, message: 'Database seeded successfully' };
   } catch (error) {
     console.error('Seeding failed:', error);
-    process.exit(1);
+    throw error;
   }
 };
 
-seedDatabase();
+module.exports = seedDatabase;
