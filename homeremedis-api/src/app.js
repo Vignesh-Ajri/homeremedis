@@ -64,18 +64,6 @@ app.use('/api/plants', plantRoutes);
 app.use('/api/remedies', remedyRoutes);
 app.use('/api/categories', categoryRoutes);
 
-// TEMP: Seed route
-const seedDatabase = require('./seed');
-app.get('/api/seed', async (req, res) => {
-  try {
-    await seedDatabase();
-    res.json({ message: 'Database successfully seeded!' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Seeding failed' });
-  }
-});
-
 // ── 404 handler ──────────────────────────────────────────────────────────────
 app.use((req, res) => {
   res.status(404).json({ message: 'Route not found' });
