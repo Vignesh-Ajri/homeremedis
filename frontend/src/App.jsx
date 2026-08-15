@@ -3,10 +3,10 @@ import { BrowserRouter, Routes, Route } from 'react-router';
 import Navbar from './components/Navbar';
 
 // Lazy-loaded page components — each loads only when the route is visited
-const Home        = lazy(() => import('./pages/Home'));
-const Plants      = lazy(() => import('./pages/Plants'));
+const Home = lazy(() => import('./pages/Home'));
+const Plants = lazy(() => import('./pages/Plants'));
 const PlantDetail = lazy(() => import('./pages/PlantDetail'));
-const Remedies    = lazy(() => import('./pages/Remedies'));
+const Remedies = lazy(() => import('./pages/Remedies'));
 const RemedyDetail = lazy(() => import('./pages/RemedyDetail'));
 
 function PageLoader() {
@@ -43,10 +43,10 @@ function App() {
         <main className="flex-1">
           <Suspense fallback={<PageLoader />}>
             <Routes>
-              <Route path="/"            element={<Home />} />
-              <Route path="/plants"      element={<Plants />} />
-              <Route path="/plants/:id"  element={<PlantDetail />} />
-              <Route path="/remedies"    element={<Remedies />} />
+              <Route path="/" element={<Home />} />
+              <Route path="/plants" element={<Plants />} />
+              <Route path="/plants/:id" element={<PlantDetail />} />
+              <Route path="/remedies" element={<Remedies />} />
               <Route path="/remedies/:id" element={<RemedyDetail />} />
             </Routes>
           </Suspense>

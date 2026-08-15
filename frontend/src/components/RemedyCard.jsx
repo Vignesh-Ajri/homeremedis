@@ -1,69 +1,132 @@
 import { Link } from 'react-router';
-import { Clock, Globe, ArrowRight, Tag, Leaf } from 'lucide-react';
+import { Clock, Globe, ArrowUpRight, Tag } from 'lucide-react';
+
+const CATEGORY_COLORS = [
+  { bg: '#f0f5ee', border: '#bdd3bf', text: '#4a6e4e' },
+  { bg: '#fdf4e8', border: '#d8c09a', text: '#7a5c30' },
+  { bg: '#f5f0ee', border: '#d0bdb4', text: '#6b4e45' },
+  { bg: '#eef3f0', border: '#b4ccbc', text: '#3e6050' },
+];
+const colorFor = (str = '') =>
+  CATEGORY_COLORS[[...str].reduce((a, c) => a + c.charCodeAt(0), 0) % CATEGORY_COLORS.length];
 
 export default function RemedyCard({ remedy }) {
   return (
     <Link
       to={`/remedies/${remedy._id}`}
-      className="group flex flex-col justify-between rounded-3xl border border-stone-200 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-emerald-900/5"
+      className="group flex flex-col overflow-hidden"
+      style={{
+        borderRadius: '16px',
+        background: '#fdf8f2',
+        border: '1px solid #e8ddd0',
+        boxShadow: '0 2px 8px rgba(100,80,50,0.07)',
+        transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+      }}
+      onMouseEnter={e => {
+        e.currentTarget.style.transform = 'translateY(-4px)';
+        e.currentTarget.style.boxShadow = '0 12px 32px rgba(100,80,50,0.14)';
+      }}
+      onMouseLeave={e => {
+        e.currentTarget.style.transform = 'translateY(0)';
+        e.currentTarget.style.boxShadow = '0 2px 8px rgba(100,80,50,0.07)';
+      }}
     >
-      <div>
-        <div className="flex items-center justify-between">
-          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-50 ring-1 ring-emerald-200">
-            <Leaf className="h-4 w-4 text-emerald-700" strokeWidth={1.75} />
-          </span>
-        </div>
+      {/* DECORATIVE TOP STRIPE — botanical pattern feel */}
+      <div style={{
+        height: '6px',
+        background: 'repeating-linear-gradient(90deg, #c8b49a 0px, #c8b49a 4px, #e8ddd0 4px, #e8ddd0 12px)',
+        opacity: 0.6,
+      }} />
 
+      <div style={{ padding: '20px 20px 16px', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
         {/* CATEGORY TAGS */}
         {remedy.categories && remedy.categories.length > 0 && (
-          <div className="mt-4 flex flex-wrap gap-1.5">
-            {remedy.categories.map((cat) => (
-              <span
-                key={cat}
-                className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-[11px] font-medium text-emerald-800"
-              >
-                <Tag className="h-3 w-3" />
-                {cat}
-              </span>
-            ))}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '14px' }}>
+            {remedy.categories.slice(0, 3).map((cat) => {
+              const col = colorFor(cat);
+              return (
+                <span
+                  key={cat}
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', gap: '4px',
+                    background: col.bg, border: `1px solid ${col.border}`,
+                    borderRadius: '20px', padding: '3px 9px',
+                    fontSize: '10px', fontWeight: 700, color: col.text,
+                    letterSpacing: '0.04em', textTransform: 'uppercase',
+                  }}
+                >
+                  <Tag size={9} />
+                  {cat}
+                </span>
+              );
+            })}
           </div>
         )}
 
-        {/* REMEDY TITLE */}
-        <h2
-          className="mt-3 text-xl text-stone-900 transition group-hover:text-emerald-800"
-          style={{ fontFamily: "'Fraunces', serif", fontWeight: 600 }}
-        >
+        {/* TITLE */}
+        <h2 style={{
+          fontFamily: "'Fraunces', 'Georgia', serif", fontWeight: 700,
+          fontSize: '1.15rem', color: '#3b2a1a', lineHeight: 1.3,
+          letterSpacing: '-0.01em', flexGrow: 1,
+        }}>
           {remedy.title}
         </h2>
 
+        {/* DIVIDER */}
+        <div style={{ height: '1px', background: '#ede4d8', margin: '14px 0 12px' }} />
+
         {/* METADATA */}
-        <div className="mt-4 space-y-2 border-t border-stone-100 pt-4 text-xs text-stone-500">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
           {remedy.prepTimeMinutes != null && (
-            <div className="flex items-center gap-2">
-              <Clock className="h-3.5 w-3.5 text-stone-400" />
-              <span>
-                <strong className="font-semibold text-stone-700">Prep time:</strong>{' '}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
+              <span style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                width: '22px', height: '22px', borderRadius: '50%',
+                background: '#f0e8dc', border: '1px solid #d8c9b4', flexShrink: 0,
+              }}>
+                <Clock size={11} color="#9c7a55" />
+              </span>
+              <span style={{ fontSize: '0.78rem', color: '#7a6245' }}>
+                <strong style={{ color: '#5a4030', fontWeight: 600 }}>Prep: </strong>
                 {remedy.prepTimeMinutes} mins
               </span>
             </div>
           )}
           {remedy.origin && (
-            <div className="flex items-center gap-2">
-              <Globe className="h-3.5 w-3.5 text-stone-400" />
-              <span>
-                <strong className="font-semibold text-stone-700">Origin:</strong>{' '}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
+              <span style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                width: '22px', height: '22px', borderRadius: '50%',
+                background: '#f0e8dc', border: '1px solid #d8c9b4', flexShrink: 0,
+              }}>
+                <Globe size={11} color="#9c7a55" />
+              </span>
+              <span style={{ fontSize: '0.78rem', color: '#7a6245' }}>
+                <strong style={{ color: '#5a4030', fontWeight: 600 }}>Origin: </strong>
                 {remedy.origin}
               </span>
             </div>
           )}
         </div>
-      </div>
 
-      {/* LINK FOOTER */}
-      <div className="mt-6 flex items-center justify-between border-t border-stone-100 pt-4 text-xs font-semibold text-emerald-800">
-        <span>View remedy</span>
-        <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
+        {/* FOOTER LINK */}
+        <div style={{
+          marginTop: '16px', paddingTop: '12px',
+          borderTop: '1px solid #ede4d8',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        }}>
+          <span style={{ fontSize: '0.72rem', fontWeight: 700, color: '#7a6245', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+            View Remedy
+          </span>
+          <span style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            width: '28px', height: '28px', borderRadius: '50%',
+            background: '#f0e8dc', border: '1px solid #d8c9b4',
+            transition: 'background 0.2s',
+          }} className="group-hover:bg-[#d8c9b4]">
+            <ArrowUpRight size={14} color="#7a6245" />
+          </span>
+        </div>
       </div>
     </Link>
   );

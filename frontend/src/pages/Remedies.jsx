@@ -1,13 +1,14 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import {
-  Sparkles,
-  AlertTriangle,
-  RefreshCw,
-  BookOpen,
-} from 'lucide-react';
+import { Sparkles, AlertTriangle, RefreshCw, BookOpen, ChevronDown } from 'lucide-react';
 import Pagination from '../components/Pagination';
-import SortFilter from '../components/SortFilter';
 import RemedyCard from '../components/RemedyCard';
+
+const SORT_OPTIONS = [
+  { label: 'Title (A–Z)', value: 'title' },
+  { label: 'Title (Z–A)', value: '-title' },
+  { label: 'Prep Time ↑', value: 'prepTimeMinutes' },
+  { label: 'Prep Time ↓', value: '-prepTimeMinutes' },
+];
 
 export default function Remedies() {
   const [remedies, setRemedies] = useState([]);
@@ -20,49 +21,28 @@ export default function Remedies() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const sortOptions = [
-    { label: 'Title (A-Z)', value: 'title' },
-    { label: 'Title (Z-A)', value: '-title' },
-    { label: 'Prep Time (Low to High)', value: 'prepTimeMinutes' },
-    { label: 'Prep Time (High to Low)', value: '-prepTimeMinutes' },
-  ];
-
-  // Fetch Categories
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const API_BASE = import.meta.env.VITE_API_BASE_URL || '';
         const res = await fetch(`${API_BASE}/api/categories`);
-        if (!res.ok) throw new Error('Failed to load categories');
+        if (!res.ok) throw new Error();
         const data = await res.json();
         setCategories(data || []);
-      } catch (err) {
-        console.error('Failed to load categories:', err);
-      }
+      } catch {/* non-critical */}
     };
     fetchCategories();
   }, []);
 
-  // Fetch Remedies (filtered by selected category)
   const fetchRemedies = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
       const API_BASE = import.meta.env.VITE_API_BASE_URL || '';
-      
-      const params = new URLSearchParams({
-        page: page.toString(),
-        limit: '6', // 6 items per page looks good in grid
-        sort: sort
-      });
-      
+      const params = new URLSearchParams({ page: page.toString(), limit: '9', sort });
       if (selectedCategory) params.append('category', selectedCategory);
-
-      const url = `${API_BASE}/api/remedies?${params.toString()}`;
-      const res = await fetch(url);
-      
+      const res = await fetch(`${API_BASE}/api/remedies?${params}`);
       if (!res.ok) throw new Error('Failed to fetch remedies');
-      
       const data = await res.json();
       setRemedies(data.data || []);
       setTotalPages(data.meta?.totalPages || 1);
@@ -74,123 +54,195 @@ export default function Remedies() {
     }
   }, [selectedCategory, sort, page]);
 
-  useEffect(() => {
-    // Reset to page 1 when category or sort changes
-    setPage(1);
-  }, [selectedCategory, sort]);
-
-  useEffect(() => {
-    fetchRemedies();
-  }, [fetchRemedies]);
+  useEffect(() => { setPage(1); }, [selectedCategory, sort]);
+  useEffect(() => { fetchRemedies(); }, [fetchRemedies]);
 
   const resultLabel = useMemo(() => {
     if (loading || error) return null;
-    return `${totalItems} ${totalItems === 1 ? 'remedy' : 'remedies'}${selectedCategory ? ` found in "${selectedCategory}"` : ''}`;
+    return `${totalItems} ${totalItems === 1 ? 'remedy' : 'remedies'}${selectedCategory ? ` in "${selectedCategory}"` : ''}`;
   }, [totalItems, loading, error, selectedCategory]);
 
   return (
-    <div className="relative overflow-hidden py-10 px-6">
-      <div className="pointer-events-none absolute -top-24 right-0 h-96 w-96 rounded-full bg-amber-200 opacity-25 blur-3xl" />
-      <div className="pointer-events-none absolute top-52 -left-24 h-80 w-80 rounded-full bg-emerald-200 opacity-25 blur-3xl" />
+    <div style={{ background: '#faf6f0', minHeight: '100vh' }}>
 
-      <div className="relative z-10 mx-auto max-w-6xl">
-        {/* HEADER SECTION */}
-        <div className="flex flex-col gap-6 border-b border-stone-200 pb-8 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-emerald-800">
-              <Sparkles className="h-3.5 w-3.5" />
-              Natural Wellness
-            </div>
-            <h1
-              className="mt-3 text-4xl text-stone-900 md:text-5xl"
-              style={{ fontFamily: "'Fraunces', serif", fontWeight: 600 }}
-            >
-              Home Remedies
-            </h1>
-            <p className="mt-2 max-w-lg text-stone-500">
-              Traditional, holistic formulations — with preparation times and
-              origins — organized by what you're looking to feel better from.
-            </p>
-          </div>
+      {/* ─── BOTANICAL HERO BANNER ─── */}
+      <div style={{
+        background: 'linear-gradient(135deg, #4a3218 0%, #7a5c30 40%, #c8a060 100%)',
+        padding: '56px 24px 80px',
+        position: 'relative', overflow: 'hidden',
+      }}>
+        {/* Decorative rings */}
+        <div style={{ position: 'absolute', top: '-60px', left: '-60px', width: '320px', height: '320px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.07)' }} />
+        <div style={{ position: 'absolute', top: '-30px', left: '-30px', width: '200px', height: '200px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.1)' }} />
+        <div style={{ position: 'absolute', bottom: '-80px', right: '-40px', width: '300px', height: '300px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.06)' }} />
 
-          <div className="flex flex-col gap-4 sm:items-end">
-            <SortFilter sortOptions={sortOptions} sort={sort} onSortChange={setSort} />
-          </div>
-        </div>
+        <div style={{ maxWidth: '1100px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+          <span style={{
+            display: 'inline-flex', alignItems: 'center', gap: '6px',
+            background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.25)',
+            borderRadius: '20px', padding: '5px 14px',
+            fontSize: '11px', fontWeight: 700, color: '#f5dda8',
+            letterSpacing: '0.08em', textTransform: 'uppercase', backdropFilter: 'blur(8px)',
+          }}>
+            <Sparkles size={11} />
+            Natural Wellness
+          </span>
 
-        {/* CATEGORY FILTER CHIPS */}
-        <div className="mt-6 flex flex-wrap items-center gap-2">
-          <button
-            onClick={() => setSelectedCategory('')}
-            className={`rounded-full px-4 py-2 text-xs font-semibold transition ${
-              selectedCategory === ''
-                ? 'bg-emerald-800 text-stone-50 shadow-sm'
-                : 'border border-stone-200 bg-white text-stone-600 hover:border-emerald-300 hover:bg-emerald-50'
-            }`}
-          >
-            All Remedies
-          </button>
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
-              className={`rounded-full px-4 py-2 text-xs font-semibold transition ${
-                selectedCategory === cat
-                  ? 'bg-emerald-800 text-stone-50 shadow-sm'
-                  : 'border border-stone-200 bg-white text-stone-600 hover:border-emerald-300 hover:bg-emerald-50'
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-
-        {resultLabel && (
-          <p className="mt-5 text-xs font-medium uppercase tracking-wide text-stone-400">
-            {resultLabel}
+          <h1 style={{
+            fontFamily: "'Fraunces', 'Georgia', serif", fontWeight: 700,
+            fontSize: 'clamp(2.2rem, 5vw, 3.5rem)', color: '#fdf6ee',
+            marginTop: '14px', lineHeight: 1.1, letterSpacing: '-0.02em',
+          }}>
+            Home Remedies
+          </h1>
+          <p style={{ marginTop: '10px', color: '#dfc090', maxWidth: '480px', lineHeight: 1.6, fontSize: '0.95rem' }}>
+            Traditional, holistic formulations — preparation times and origins — organized by what you need.
           </p>
-        )}
+        </div>
+      </div>
 
-        {/* CONTENT STATES */}
-        {loading ? (
-          <RemediesSkeleton />
-        ) : error ? (
-          <RemediesError message={error} onRetry={fetchRemedies} />
-        ) : remedies.length === 0 ? (
-          <EmptyState selectedCategory={selectedCategory} onClear={() => setSelectedCategory('')} />
-        ) : (
-          <>
-            <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {remedies.map((remedy) => (
-                <RemedyCard key={remedy._id} remedy={remedy} />
-              ))}
+      {/* ─── CONTENT SECTION ─── */}
+      <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 24px 60px' }}>
+
+        {/* FLOATING TOOLBAR */}
+        <div style={{
+          background: '#fdf8f2', border: '1px solid #e8ddd0',
+          borderRadius: '12px', padding: '14px 18px',
+          marginTop: '-24px', position: 'relative', zIndex: 2,
+          boxShadow: '0 4px 16px rgba(80,60,30,0.08)',
+        }}>
+          {/* CATEGORY CHIPS */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', alignItems: 'center' }}>
+            <CategoryChip label="All Remedies" active={selectedCategory === ''} onClick={() => setSelectedCategory('')} />
+            {categories.map(cat => (
+              <CategoryChip key={cat} label={cat} active={selectedCategory === cat} onClick={() => setSelectedCategory(cat)} />
+            ))}
+
+            {/* SORT — pushed to the right */}
+            <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '0.78rem', color: '#9c8572' }}>Sort by</span>
+              <div style={{ position: 'relative' }}>
+                <select
+                  value={sort}
+                  onChange={e => setSort(e.target.value)}
+                  style={{
+                    appearance: 'none', background: '#f5ede0',
+                    border: '1px solid #d8c9b4', borderRadius: '8px',
+                    padding: '6px 32px 6px 12px',
+                    fontSize: '0.82rem', color: '#5a4030', fontWeight: 600,
+                    cursor: 'pointer', outline: 'none',
+                  }}
+                >
+                  {SORT_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+                </select>
+                <ChevronDown size={13} color="#9c7a55" style={{ position: 'absolute', right: '9px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
+              </div>
             </div>
-            <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
-          </>
-        )}
+          </div>
+
+          {/* RESULT COUNT */}
+          {resultLabel && (
+            <p style={{ marginTop: '10px', fontSize: '0.75rem', color: '#b0998a', borderTop: '1px solid #ede4d8', paddingTop: '10px' }}>
+              {resultLabel}
+            </p>
+          )}
+        </div>
+
+        {/* GRID */}
+        <div style={{ marginTop: '28px' }}>
+          {loading ? (
+            <RemediesSkeleton />
+          ) : error ? (
+            <RemediesError message={error} onRetry={fetchRemedies} />
+          ) : remedies.length === 0 ? (
+            <EmptyState selectedCategory={selectedCategory} onClear={() => setSelectedCategory('')} />
+          ) : (
+            <>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+                gap: '20px',
+              }}>
+                {remedies.map(remedy => <RemedyCard key={remedy._id} remedy={remedy} />)}
+              </div>
+              <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
 }
 
+/* ── CATEGORY CHIP ── */
+function CategoryChip({ label, active, onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        borderRadius: '20px', padding: '5px 14px',
+        fontSize: '0.78rem', fontWeight: 600, cursor: 'pointer',
+        border: active ? 'none' : '1px solid #d8c9b4',
+        background: active ? '#4a6e3a' : '#f5ede0',
+        color: active ? '#d4efc0' : '#7a6245',
+        transition: 'all 0.2s',
+        boxShadow: active ? '0 2px 8px rgba(74,110,58,0.25)' : 'none',
+      }}
+      onMouseEnter={e => { if (!active) { e.currentTarget.style.background = '#ede4d4'; e.currentTarget.style.borderColor = '#c8b49a'; } }}
+      onMouseLeave={e => { if (!active) { e.currentTarget.style.background = '#f5ede0'; e.currentTarget.style.borderColor = '#d8c9b4'; } }}
+    >
+      {label}
+    </button>
+  );
+}
 
+/* ── SKELETON ── */
+function RemediesSkeleton() {
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
+      {[...Array(9)].map((_, i) => (
+        <div key={i} style={{ borderRadius: '16px', overflow: 'hidden', background: '#fdf8f2', border: '1px solid #e8ddd0', height: '220px' }}>
+          <div style={{ height: '6px', background: '#ede4d8' }} />
+          <div style={{ padding: '20px' }}>
+            <div style={{ display: 'flex', gap: '6px', marginBottom: '14px' }}>
+              {[40, 55, 48].map((w, j) => (
+                <div key={j} style={{ height: '20px', width: `${w}px`, borderRadius: '20px', background: 'linear-gradient(90deg, #ede4d8 25%, #f5ede0 50%, #ede4d8 75%)', backgroundSize: '200% 100%', animation: 'shimmer 1.4s infinite' }} />
+              ))}
+            </div>
+            <div style={{ height: '22px', width: '80%', borderRadius: '6px', background: '#ede4d8', marginBottom: '8px' }} />
+            <div style={{ height: '14px', width: '55%', borderRadius: '6px', background: '#f0e8dc' }} />
+          </div>
+          <style>{`@keyframes shimmer { to { background-position: -200% 0; } }`}</style>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ── EMPTY STATE ── */
 function EmptyState({ selectedCategory, onClear }) {
   return (
-    <div className="mt-10 rounded-3xl border border-dashed border-stone-300 bg-white p-12 text-center">
-      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-amber-50">
-        <BookOpen className="h-7 w-7 text-amber-700" />
+    <div style={{
+      textAlign: 'center', padding: '64px 24px',
+      border: '1px dashed #c8b49a', borderRadius: '16px', background: '#fdf8f2',
+    }}>
+      <div style={{
+        width: '56px', height: '56px', borderRadius: '50%',
+        background: '#f5ede0', border: '1px solid #d8c9b4',
+        display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto',
+      }}>
+        <BookOpen size={24} color="#9c7a55" />
       </div>
-      <h3 className="mt-4 text-base font-semibold text-stone-900">No remedies found</h3>
-      <p className="mt-1 text-sm text-stone-500">
+      <h3 style={{ marginTop: '16px', fontFamily: "'Fraunces', serif", fontSize: '1.1rem', color: '#3b2a1a' }}>
+        No remedies found
+      </h3>
+      <p style={{ marginTop: '6px', fontSize: '0.85rem', color: '#9c8572' }}>
         {selectedCategory
-          ? `There are currently no remedies in the "${selectedCategory}" category.`
+          ? `No remedies in "${selectedCategory}" yet.`
           : 'No remedies available at this time.'}
       </p>
       {selectedCategory && (
-        <button
-          onClick={onClear}
-          className="mt-4 text-sm font-semibold text-emerald-800 hover:underline"
-        >
+        <button onClick={onClear} style={{ marginTop: '14px', fontSize: '0.82rem', fontWeight: 700, color: '#7a6245', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}>
           View all remedies
         </button>
       )}
@@ -198,43 +250,38 @@ function EmptyState({ selectedCategory, onClear }) {
   );
 }
 
-function RemediesSkeleton() {
-  return (
-    <div className="mt-8 grid animate-pulse grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {[...Array(6)].map((_, i) => (
-        <div
-          key={i}
-          className="flex h-56 flex-col justify-between rounded-3xl border border-stone-200 bg-white p-6"
-        >
-          <div className="space-y-3">
-            <div className="h-4 w-1/3 rounded bg-stone-200" />
-            <div className="h-6 w-3/4 rounded bg-stone-200" />
-            <div className="h-4 w-1/2 rounded bg-stone-200" />
-          </div>
-          <div className="space-y-2 border-t border-stone-100 pt-4">
-            <div className="h-4 w-2/3 rounded bg-stone-200" />
-            <div className="h-4 w-1/3 rounded bg-stone-200" />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
+/* ── ERROR STATE ── */
 function RemediesError({ message, onRetry }) {
   return (
-    <div className="mx-auto mt-10 max-w-sm rounded-3xl border border-stone-200 bg-white p-8 text-center shadow-sm">
-      <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-50">
-        <AlertTriangle className="h-6 w-6 text-red-500" />
+    <div style={{
+      maxWidth: '360px', margin: '40px auto', textAlign: 'center',
+      padding: '36px 28px', background: '#fdf8f2',
+      border: '1px solid #e8ddd0', borderRadius: '16px',
+      boxShadow: '0 4px 16px rgba(80,60,30,0.07)',
+    }}>
+      <div style={{
+        width: '48px', height: '48px', borderRadius: '50%',
+        background: '#fdf0ee', border: '1px solid #f0c0b8',
+        display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto',
+      }}>
+        <AlertTriangle size={22} color="#c05040" />
       </div>
-      <h3 className="mt-4 text-base font-semibold text-stone-900">Failed to load remedies</h3>
-      <p className="mt-1 text-sm text-stone-500">{message}</p>
+      <h3 style={{ marginTop: '14px', fontFamily: "'Fraunces', serif", fontSize: '1rem', color: '#3b2a1a' }}>
+        Failed to load remedies
+      </h3>
+      <p style={{ marginTop: '6px', fontSize: '0.82rem', color: '#9c8572' }}>{message}</p>
       <button
         onClick={onRetry}
-        className="mt-6 inline-flex items-center gap-2 rounded-full bg-emerald-800 px-5 py-2.5 text-sm font-semibold text-emerald-50 transition hover:bg-emerald-900"
+        style={{
+          marginTop: '20px', display: 'inline-flex', alignItems: 'center', gap: '8px',
+          background: '#7a5c30', color: '#fdf6ee',
+          border: 'none', borderRadius: '40px', padding: '10px 22px',
+          fontSize: '0.82rem', fontWeight: 700, cursor: 'pointer',
+        }}
+        onMouseEnter={e => e.currentTarget.style.background = '#5a4020'}
+        onMouseLeave={e => e.currentTarget.style.background = '#7a5c30'}
       >
-        <RefreshCw className="h-4 w-4" />
-        Try again
+        <RefreshCw size={14} /> Try again
       </button>
     </div>
   );
